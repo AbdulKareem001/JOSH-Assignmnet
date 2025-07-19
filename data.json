@@ -1,0 +1,136 @@
+{
+  "pizzas": [
+    {
+      "id": 1,
+      "title": "Home made pizza",
+      "rating": 4.7,
+      "deliveryTime": "30-70 min",
+      "price": 190,
+      "discount": null,
+      "background": "#8B4513",
+      "fillColor": "#FFD700",
+      "imagePath": "assets\\unsplash_33GPuoFI7v8.png"
+    },
+    {
+      "id": 2,
+      "title": "Home made pizza",
+      "rating": 4.7,
+      "deliveryTime": "50-70 min",
+      "price": 123,
+      "discount": null,
+      "background": "#D2691E",
+      "fillColor": "#F5DEB3",
+      "imagePath": "assets\\unsplash_33GPuoFI7v8.png"
+    },
+    {
+      "id": 3,
+      "title": "Home made pizza",
+      "rating": 4.7,
+      "deliveryTime": "50-70 min",
+      "price": 190,
+      "discount": 40,
+      "background": "#654321",
+      "fillColor": "#FFD700",
+      "imagePath": "assets\\unsplash_33GPuoFI7v8.png"
+    },
+    {
+      "id": 4,
+      "title": "Home made pizza",
+      "rating": 4.7,
+      "deliveryTime": "50-70 min",
+      "price": 190,
+      "discount": null,
+      "background": "#8B4513",
+      "fillColor": "#F5DEB3",
+      "imagePath": "assets\\unsplash_33GPuoFI7v8.png"
+    },
+    {
+      "id": 5,
+      "title": "Home made pizza",
+      "rating": 4.7,
+      "deliveryTime": "30-70 min",
+      "price": 190,
+      "discount": null,
+      "background": "#8B4513",
+      "fillColor": "#FFD700",
+      "imagePath": "assets\\unsplash_33GPuoFI7v8.png"
+    },
+    {
+      "id": 6,
+      "title": "Home made pizza",
+      "rating": 4.7,
+      "deliveryTime": "50-70 min",
+      "price": 123,
+      "discount": null,
+      "background": "#D2691E",
+      "fillColor": "#F5DEB3",
+      "imagePath": "assets\\unsplash_33GPuoFI7v8.png"
+    },
+    {
+      "id": 7,
+      "title": "Home made pizza",
+      "rating": 4.7,
+      "deliveryTime": "50-70 min",
+      "price": 190,
+      "discount": 40,
+      "background": "#654321",
+      "fillColor": "#FFD700",
+      "imagePath": "assets\\unsplash_33GPuoFI7v8.png"
+    },
+    {
+      "id": 8,
+      "title": "Home made pizza",
+      "rating": 4.7,
+      "deliveryTime": "50-70 min",
+      "price": 190,
+      "discount": null,
+      "background": "#8B4513",
+      "fillColor": "#F5DEB3",
+      "imagePath": "assets\\unsplash_33GPuoFI7v8.png"
+    },
+        {
+      "id": 9,
+      "title": "Home made pizza",
+      "rating": 4.7,
+      "deliveryTime": "50-70 min",
+      "price": 190,
+      "discount": 40,
+      "background": "#654321",
+      "fillColor": "#FFD700",
+      "imagePath": "assets\\unsplash_33GPuoFI7v8.png"
+    },
+    {
+      "id": 10,
+      "title": "Home made pizza",
+      "rating": 4.7,
+      "deliveryTime": "50-70 min",
+      "price": 190,
+      "discount": null,
+      "background": "#8B4513",
+      "fillColor": "#F5DEB3",
+      "imagePath": "assets\\unsplash_33GPuoFI7v8.png"
+    },
+         {
+      "id": 11,
+      "title": "Home made pizza",
+      "rating": 4.7,
+      "deliveryTime": "50-70 min",
+      "price": 190,
+      "discount": 40,
+      "background": "#654321",
+      "fillColor": "#FFD700",
+      "imagePath": "assets\\unsplash_33GPuoFI7v8.png"
+    },
+    {
+      "id": 12,
+      "title": "Home made pizza",
+      "rating": 4.7,
+      "deliveryTime": "50-70 min",
+      "price": 190,
+      "discount": null,
+      "background": "#8B4513",
+      "fillColor": "#F5DEB3",
+      "imagePath": "assets\\unsplash_33GPuoFI7v8.png"
+    }
+  ]
+}

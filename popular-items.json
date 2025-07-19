@@ -1,0 +1,54 @@
+{
+  "popularItems": [
+    {
+      "id": 1,
+      "title": "Home made pizza",
+      "rating": 4.7,
+      "deliveryTime": "30-70 min",
+      "price": 190,
+      "discount": null,
+      "imagePath": "assets\\unsplash_33GPuoFI7v8.png",
+      "quantity": 1
+    },
+    {
+      "id": 2,
+      "title": "Tandoori Chicken",
+      "rating": 4.3,
+      "deliveryTime": "15-20 min",
+      "price": 184,
+      "discount": 30,
+      "imagePath": "assets\\unsplash_33GPuoFI7v8.png",
+      "quantity": 1
+    },
+    {
+      "id": 3,
+      "title": "Chilli Chicken",
+      "rating": 4.1,
+      "deliveryTime": "25-40 min",
+      "price": 116,
+      "discount": 20,
+      "imagePath": "assets\\unsplash_33GPuoFI7v8.png",
+      "quantity": 1
+    },
+    {
+      "id": 4,
+      "title": "Palak Paneer",
+      "rating": 4.5,
+      "deliveryTime": "20-30 min",
+      "price": 150,
+      "discount": null,
+      "imagePath": "assets\\unsplash_33GPuoFI7v8.png",
+      "quantity": 1
+    },
+    {
+      "id": 5,
+      "title": "Butter Naan",
+      "rating": 4.6,
+      "deliveryTime": "10-15 min",
+      "price": 45,
+      "discount": 25,
+      "imagePath": "assets\\unsplash_33GPuoFI7v8.png",
+      "quantity": 1
+    }
+  ]
+}
