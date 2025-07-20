@@ -49,6 +49,16 @@
       "discount": 25,
       "imagePath": "assets\\unsplash_33GPuoFI7v8.png",
       "quantity": 1
+    },
+    {
+      "id": 6,
+      "title": "Butter Chicken",
+      "rating": 4.8,
+      "deliveryTime": "20-35 min",
+      "price": 220,
+      "discount": 15,
+      "imagePath": "assets\\unsplash_33GPuoFI7v8.png",
+      "quantity": 1
     }
   ]
 }

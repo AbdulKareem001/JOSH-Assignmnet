@@ -58,42 +58,56 @@ function createPizzaCard(pizza) {
 }
 
 // Function to create a carousel item element
-function createCarouselItem(item, index, isCenter = false) {
+function createCarouselItem(item, index, isActive = false) {
   const carouselItem = document.createElement('div');
   carouselItem.className = 'carousel-item';
-  if (isCenter) {
-    carouselItem.classList.add('center');
+  carouselItem.dataset.index = index;
+  if (isActive) {
+    carouselItem.classList.add('active');
   }
   
   // Create item image
   const imageHTML = `
     <div class="item-image">
       ${item.discount ? `<div class="discount-badge">${item.discount}%</div>` : ''}
-      <img src="${item.imagePath}" alt="${item.title}" style="width: 100%; height: 200px; object-fit: cover;">
+      <img src="${item.imagePath}" alt="${item.title}">
     </div>
   `;
   
   // Create item info section
   const infoHTML = `
     <div class="item-info">
-      <div class="item-title">${item.title}</div>
-      <div class="item-footer">
-        <div class="item-rating">
-          <span class="star">★</span>
-          <span>${item.rating}</span>
-          <span>(${item.deliveryTime})</span>
-        </div>
-        <span class="item-price">₹${item.price}</span>
+      <div class="item-name">${item.title}</div>
+      <div class="item-price">₹${item.price}</div>
+      <div class="item-rating">
+        <span class="star">★</span>
+        <span>${item.rating}</span>
+        <span class="delivery-time">${item.deliveryTime}</span>
       </div>
       <div class="quantity-controls">
-        <button class="qty-btn" onclick="changeQuantity(${index}, -1)">−</button>
+        <button class="qty-btn minus">-</button>
         <div class="qty-display" id="qty-${index}">${item.quantity}</div>
-        <button class="qty-btn" onclick="changeQuantity(${index}, 1)">+</button>
+        <button class="qty-btn plus">+</button>
       </div>
     </div>
   `;
   
   carouselItem.innerHTML = imageHTML + infoHTML;
+  
+  // Add event listeners for quantity buttons
+  setTimeout(() => {
+    const minusBtn = carouselItem.querySelector('.qty-btn.minus');
+    const plusBtn = carouselItem.querySelector('.qty-btn.plus');
+    
+    if (minusBtn) {
+      minusBtn.addEventListener('click', () => changeQuantity(index, -1));
+    }
+    
+    if (plusBtn) {
+      plusBtn.addEventListener('click', () => changeQuantity(index, 1));
+    }
+  }, 0);
+  
   return carouselItem;
 }
 
@@ -126,20 +140,37 @@ async function renderPopularItems() {
   // Fetch popular items data
   const popularItems = await fetchPopularItemsData();
   
-  // Create and append carousel items
+  // Create and append all carousel items
   popularItems.forEach((item, index) => {
-    const isCenter = index === 0; // First item is centered
-    const carouselItem = createCarouselItem(item, index, isCenter);
+    const carouselItem = createCarouselItem(item, index);
     carousel.appendChild(carouselItem);
   });
   
-  // Initialize carousel position
-  moveCarousel(0);
+  // Initialize carousel
+  initializeCarousel();
 }
 
 // Global variables for carousel
-let currentSlide = 0;
+let currentIndex = 0;
+let itemWidth = 270; // Width of each item including margins
 let quantities = [];
+
+// Function to initialize the carousel
+function initializeCarousel() {
+  const carousel = document.getElementById('carousel');
+  if (!carousel) return;
+  
+  const items = carousel.children;
+  const totalItems = items.length;
+  
+  if (totalItems === 0) return;
+  
+  // Set initial active state
+  updateActiveItems();
+  
+  // Position carousel to show first three items
+  positionCarousel();
+}
 
 // Function to move the carousel
 function moveCarousel(direction) {
@@ -147,114 +178,50 @@ function moveCarousel(direction) {
   if (!carousel) return;
   
   const items = carousel.children;
-  const totalSlides = items.length;
+  const totalItems = items.length;
   
-  if (totalSlides === 0) return;
+  if (totalItems === 0) return;
   
-  // Remove center class from current item
-  items[currentSlide].classList.remove('center');
+  // Always move forward in the specified direction
+  currentIndex = (currentIndex + direction + totalItems) % totalItems;
   
-  // Update indicators
-  updateIndicators(currentSlide, false);
+  // Update active items
+  updateActiveItems();
   
-  // Update current slide
-  currentSlide += direction;
-  
-  // Handle wrap around with infinite scroll effect
-  if (currentSlide >= totalSlides) {
-    // Clone first item and append to end for smooth transition
-    const firstItemClone = items[0].cloneNode(true);
-    carousel.appendChild(firstItemClone);
-    
-    // Animate to the clone
-    const itemWidth = 330; // 300px width + 30px margins
-    let offset = -(currentSlide * itemWidth) + (window.innerWidth / 2) - (itemWidth / 2);
-    carousel.style.transition = 'transform 0.3s ease';
-    carousel.style.transform = `translateX(${offset}px)`;
-    
-    // After animation completes, jump to the real first item without animation
-    setTimeout(() => {
-      carousel.style.transition = 'none';
-      currentSlide = 0;
-      offset = -(currentSlide * itemWidth) + (window.innerWidth / 2) - (itemWidth / 2);
-      carousel.style.transform = `translateX(${offset}px)`;
-      carousel.removeChild(firstItemClone);
-      
-      // Update indicators
-      updateIndicators(currentSlide, true);
-      
-      // Re-enable transitions after jump
-      setTimeout(() => {
-        carousel.style.transition = 'transform 0.3s ease';
-      }, 50);
-    }, 300);
-  } else if (currentSlide < 0) {
-    // Clone last item and prepend to beginning for smooth transition
-    const lastItemClone = items[totalSlides - 1].cloneNode(true);
-    carousel.insertBefore(lastItemClone, items[0]);
-    
-    // Adjust position to account for the new first item
-    const itemWidth = 330;
-    let offset = -((currentSlide + 1) * itemWidth) + (window.innerWidth / 2) - (itemWidth / 2);
-    carousel.style.transition = 'none';
-    carousel.style.transform = `translateX(${offset}px)`;
-    
-    // Force reflow
-    carousel.offsetHeight;
-    
-    // Animate to the real position
-    currentSlide = totalSlides - 1;
-    carousel.style.transition = 'transform 0.3s ease';
-    offset = -(currentSlide * itemWidth) + (window.innerWidth / 2) - (itemWidth / 2);
-    carousel.style.transform = `translateX(${offset}px)`;
-    
-    // Update indicators
-    updateIndicators(currentSlide, true);
-    
-    // After animation completes, remove the clone
-    setTimeout(() => {
-      carousel.removeChild(lastItemClone);
-    }, 300);
-  } else {
-    // Normal slide movement
-    // Add center class to new current item
-    items[currentSlide].classList.add('center');
-    
-    // Update indicators
-    updateIndicators(currentSlide, true);
-    
-    // Calculate transform
-    const itemWidth = 330; // 300px width + 30px margins
-    const offset = -(currentSlide * itemWidth) + (window.innerWidth / 2) - (itemWidth / 2);
-    
-    carousel.style.transition = 'transform 0.3s ease';
-    carousel.style.transform = `translateX(${offset}px)`;
-  }
+  // Position carousel
+  positionCarousel();
 }
 
-// Function to update indicators
-function updateIndicators(index, isActive) {
-  const indicators = document.querySelectorAll('.indicator');
-  if (indicators.length === 0) return;
+// Function to update which items are active
+function updateActiveItems() {
+  const carousel = document.getElementById('carousel');
+  if (!carousel) return;
   
-  indicators.forEach(indicator => {
-    indicator.classList.remove('active');
-  });
+  const items = carousel.children;
+  const totalItems = items.length;
   
-  if (isActive && indicators[index]) {
-    indicators[index].classList.add('active');
+  // Remove active class from all items
+  for (let i = 0; i < totalItems; i++) {
+    items[i].classList.remove('active');
   }
+  
+  // Add active class to current item
+  items[currentIndex].classList.add('active');
 }
 
-// Function to handle indicator click
-function handleIndicatorClick(event) {
-  const index = parseInt(event.target.dataset.index);
-  if (isNaN(index)) return;
+// Function to position the carousel
+function positionCarousel() {
+  const carousel = document.getElementById('carousel');
+  if (!carousel) return;
   
-  const diff = index - currentSlide;
-  if (diff !== 0) {
-    moveCarousel(diff);
-  }
+  const containerWidth = document.querySelector('.carousel-container').offsetWidth;
+  const centerPosition = (containerWidth - itemWidth) / 2;
+  
+  // Calculate offset to center the active item
+  const offset = -(currentIndex * itemWidth) + centerPosition;
+  
+  carousel.style.transition = 'transform 0.3s ease';
+  carousel.style.transform = `translateX(${offset}px)`;
 }
 
 // Function to change quantity
@@ -266,6 +233,37 @@ function changeQuantity(itemIndex, change) {
   if (quantity < 1) quantity = 1;
   
   qtyDisplay.textContent = quantity;
+}
+
+// Video player functionality
+function setupVideoPlayer() {
+  const videoWrapper = document.getElementById('videoWrapper');
+  const video = document.getElementById('foodVideo');
+  const playOverlay = document.getElementById('playOverlay');
+  
+  if (videoWrapper && video && playOverlay) {
+    // Toggle play/pause on click
+    playOverlay.addEventListener('click', function() {
+      if (video.paused) {
+        video.style.display = 'block';
+        video.play();
+        playOverlay.style.opacity = '0';
+      } else {
+        video.pause();
+        playOverlay.style.opacity = '1';
+      }
+    });
+    
+    // When video ends, show the overlay again
+    video.addEventListener('ended', function() {
+      playOverlay.style.opacity = '1';
+    });
+    
+    // When video is paused, show the overlay
+    video.addEventListener('pause', function() {
+      playOverlay.style.opacity = '1';
+    });
+  }
 }
 
 // Modal functions
@@ -315,10 +313,10 @@ function startCarouselAutoScroll() {
     clearInterval(carouselInterval);
   }
   
-  // Set new interval to move carousel every 3 seconds
+  // Set new interval to move carousel every 5 seconds as per requirements
   carouselInterval = setInterval(() => {
     moveCarousel(1);
-  }, 3000);
+  }, 5000);
 }
 
 // Function to stop auto-scrolling
@@ -333,12 +331,7 @@ function stopCarouselAutoScroll() {
 document.addEventListener('DOMContentLoaded', () => {
   renderPizzaCards();
   renderPopularItems();
-  
-  // Set up indicator click events
-  const indicators = document.querySelectorAll('.indicator');
-  indicators.forEach(indicator => {
-    indicator.addEventListener('click', handleIndicatorClick);
-  });
+  setupVideoPlayer();
   
   // Handle window resize for carousel
   window.addEventListener('resize', () => {
@@ -351,9 +344,6 @@ document.addEventListener('DOMContentLoaded', () => {
       closeModal();
     }
   });
-  
-  // Initialize the first indicator as active
-  updateIndicators(0, true);
   
   // Add hover events to pause/resume auto-scroll
   const carouselContainer = document.querySelector('.carousel-container');
