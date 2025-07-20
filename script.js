@@ -213,13 +213,19 @@ function updateActiveItems() {
 function positionCarousel() {
   const carousel = document.getElementById('carousel');
   if (!carousel) return;
-  
+
+  const items = carousel.children;
+  const totalItems = items.length;
   const containerWidth = document.querySelector('.carousel-container').offsetWidth;
-  const centerPosition = (containerWidth - itemWidth) / 2;
-  
-  // Calculate offset to center the active item
-  const offset = -(currentIndex * itemWidth) + centerPosition;
-  
+
+  // Calculate offset to always show 3 items, loop endlessly
+  let offset = -(currentIndex * itemWidth);
+
+  // If less than 3 items, center them
+  if (totalItems <= 3) {
+    offset = (containerWidth - totalItems * itemWidth) / 2;
+  }
+
   carousel.style.transition = 'transform 0.3s ease';
   carousel.style.transform = `translateX(${offset}px)`;
 }
@@ -235,33 +241,47 @@ function changeQuantity(itemIndex, change) {
   qtyDisplay.textContent = quantity;
 }
 
-// Video player functionality
+// Video player functionality for YouTube embed
 function setupVideoPlayer() {
   const videoWrapper = document.getElementById('videoWrapper');
   const video = document.getElementById('foodVideo');
   const playOverlay = document.getElementById('playOverlay');
-  
-  if (videoWrapper && video && playOverlay) {
-    // Toggle play/pause on click
+  const videoThumbnail = document.getElementById('videoThumbnail');
+
+  if (videoWrapper && video && playOverlay && videoThumbnail) {
+    // Show video and hide thumbnail/overlay on play
     playOverlay.addEventListener('click', function() {
-      if (video.paused) {
-        video.style.display = 'block';
-        video.play();
-        playOverlay.style.opacity = '0';
-      } else {
+      videoThumbnail.style.display = 'none';
+      playOverlay.style.display = 'none';
+      video.style.display = 'block';
+      video.currentTime = 0;
+      video.play();
+    });
+
+    // Pause video when clicking on it while playing
+    video.addEventListener('click', function() {
+      if (!video.paused) {
         video.pause();
-        playOverlay.style.opacity = '1';
       }
     });
-    
-    // When video ends, show the overlay again
-    video.addEventListener('ended', function() {
-      playOverlay.style.opacity = '1';
-    });
-    
-    // When video is paused, show the overlay
+
+    // Show overlay when paused
     video.addEventListener('pause', function() {
-      playOverlay.style.opacity = '1';
+      playOverlay.style.display = 'flex';
+    });
+
+    // Show overlay when ended
+    video.addEventListener('ended', function() {
+      playOverlay.style.display = 'flex';
+    });
+
+    // Optional: Hide video and show thumbnail when overlay is shown again
+    playOverlay.addEventListener('click', function() {
+      // Only hide thumbnail on first play
+      if (video.paused) {
+        videoThumbnail.style.display = 'none';
+        video.style.display = 'block';
+      }
     });
   }
 }
@@ -303,55 +323,32 @@ function submitRequest() {
   closeModal();
 }
 
-// Auto-scroll interval variable
-let carouselInterval;
-
-// Function to start auto-scrolling
-function startCarouselAutoScroll() {
-  // Clear any existing interval
-  if (carouselInterval) {
-    clearInterval(carouselInterval);
-  }
-  
-  // Set new interval to move carousel every 5 seconds as per requirements
-  carouselInterval = setInterval(() => {
-    moveCarousel(1);
-  }, 5000);
-}
-
-// Function to stop auto-scrolling
-function stopCarouselAutoScroll() {
-  if (carouselInterval) {
-    clearInterval(carouselInterval);
-    carouselInterval = null;
-  }
-}
-
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
   renderPizzaCards();
   renderPopularItems();
   setupVideoPlayer();
-  
+
   // Handle window resize for carousel
   window.addEventListener('resize', () => {
     moveCarousel(0);
   });
-  
+
   // Close modal when clicking outside
   document.getElementById('modalOverlay').addEventListener('click', function(e) {
     if (e.target === this) {
       closeModal();
     }
   });
-  
-  // Add hover events to pause/resume auto-scroll
-  const carouselContainer = document.querySelector('.carousel-container');
-  if (carouselContainer) {
-    carouselContainer.addEventListener('mouseenter', stopCarouselAutoScroll);
-    carouselContainer.addEventListener('mouseleave', startCarouselAutoScroll);
+});
+
+// Mobile nav toggle for responsive navigation
+document.addEventListener('DOMContentLoaded', function() {
+  const hamburger = document.querySelector('.hamburger-menu');
+  const navLinks = document.querySelector('.nav-links');
+  if (hamburger && navLinks) {
+    hamburger.addEventListener('click', function() {
+      navLinks.classList.toggle('active');
+    });
   }
-  
-  // Start auto-scrolling
-  startCarouselAutoScroll();
 });
