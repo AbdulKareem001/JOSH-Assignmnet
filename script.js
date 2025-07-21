@@ -275,47 +275,7 @@ function positionCarousel() {
 // Function to toggle counter for popular items
 function toggleCounter(btn) {
   const parent = btn.parentElement;
-
-  const counterDiv = document.createElement('div');
-  counterDiv.className = 'counter-controls';
-
-  const minusBtn = document.createElement('button');
-  minusBtn.textContent = '-';
-  minusBtn.onclick = function (e) {
-    e.stopPropagation();
-    const current = parseInt(countSpan.textContent);
-    if (current > 1) {
-      countSpan.textContent = current - 1;
-    } else {
-      parent.innerHTML = '';
-      const newBtn = document.createElement('button');
-      newBtn.className = 'add-btn';
-      newBtn.textContent = '+';
-      newBtn.onclick = function (e) { 
-        e.stopPropagation();
-        toggleCounter(newBtn); 
-      };
-      parent.appendChild(newBtn);
-    }
-  };
-
-  const countSpan = document.createElement('span');
-  countSpan.textContent = '1';
-
-  const plusBtn = document.createElement('button');
-  plusBtn.textContent = '+';
-  plusBtn.onclick = function (e) {
-    e.stopPropagation();
-    const current = parseInt(countSpan.textContent);
-    countSpan.textContent = current + 1;
-  };
-
-  counterDiv.appendChild(minusBtn);
-  counterDiv.appendChild(countSpan);
-  counterDiv.appendChild(plusBtn);
-
-  parent.innerHTML = '';
-  parent.appendChild(counterDiv);
+  renderCounter(parent, 1);
 }
 
 // Video player functionality for YouTube embed
@@ -323,12 +283,12 @@ function setupVideoPlayer() {
   const videoWrapper = document.getElementById('videoWrapper');
   const video = document.getElementById('foodVideo');
   const playOverlay = document.getElementById('playOverlay');
-  const videoThumbnail = document.getElementById('videoThumbnail');
+  const videoThumbnail = document.querySelector('.video-thumbnail');
 
-  if (videoWrapper && video && playOverlay && videoThumbnail) {
+  if (videoWrapper && video && playOverlay) {
     // Show video and hide thumbnail/overlay on play
     playOverlay.addEventListener('click', function() {
-      videoThumbnail.style.display = 'none';
+      if (videoThumbnail) videoThumbnail.style.display = 'none';
       playOverlay.style.display = 'none';
       video.style.display = 'block';
       video.currentTime = 0;
@@ -339,6 +299,7 @@ function setupVideoPlayer() {
     video.addEventListener('click', function() {
       if (!video.paused) {
         video.pause();
+        playOverlay.style.display = 'flex';
       }
     });
 
@@ -350,15 +311,6 @@ function setupVideoPlayer() {
     // Show overlay when ended
     video.addEventListener('ended', function() {
       playOverlay.style.display = 'flex';
-    });
-
-    // Optional: Hide video and show thumbnail when overlay is shown again
-    playOverlay.addEventListener('click', function() {
-      // Only hide thumbnail on first play
-      if (video.paused) {
-        videoThumbnail.style.display = 'none';
-        video.style.display = 'block';
-      }
     });
   }
 }
