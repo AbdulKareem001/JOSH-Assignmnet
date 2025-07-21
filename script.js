@@ -43,10 +43,18 @@ function createPizzaCard(pizza) {
         <div class="pizza-price" style="font-size: 18px; font-weight: bold; color: #333;">₹${pizza.price}</div>
       </div>
       <div class="pizza-footer">
-        <div class="pizza-rating" style="background-color: #f0f0f0; padding: 4px 8px; border-radius: 4px; display: flex; align-items: center; gap: 4px;">
-          <span class="star">★</span>
-          <span>${pizza.rating}</span>
+      <div class="pizza-footer-space" >
+        <div class="pizza-rating" style="background-color: #f0f0f0; padding: 0px 8px; border-radius: 4px; margin-right: 8px;">
+          <img src="assets/star-filled.png" alt="star" style="width: 14px; height: 14px; margin-right: 2px;">
+          <span >${pizza.rating}</span>
+          </div>
+          
+
+           <div class="pizza-rating" style="background-color: #BEBEBE; padding: 0px 4px; border-radius: 5px;">
+           <div class="pizza-rating" style="background-color: #F7F8FA; padding: 4px 4px; border-radius: 5px;">
           <span>(${pizza.deliveryTime})</span>
+           </div>
+           </div>
         </div>
         <button class="add-btn">+</button>
       </div>
@@ -65,7 +73,7 @@ function createCarouselItem(item, index, isActive = false) {
   if (isActive) {
     carouselItem.classList.add('active');
   }
-  
+
   // Create item image
   const imageHTML = `
     <div class="item-image">
@@ -73,41 +81,67 @@ function createCarouselItem(item, index, isActive = false) {
       <img src="${item.imagePath}" alt="${item.title}">
     </div>
   `;
-  
+
+  // Quantity controls UI (matches the image)
+  let quantityControlsHTML = '';
+  if (item.quantity === 0) {
+    quantityControlsHTML = `
+      <button class="qty-btn plus">
+          <img src="assets/move-to-cart.png" alt="plus" style="width: 26px; height: 25px;">
+        </button>
+    `;
+  } else {
+    quantityControlsHTML = `
+      <div class="quantity-controls custom-qty-controls" style="display: flex; align-items: center; justify-content: center;  background: #F3BA00; border-radius: 5px; height: 28px; width: 90px; margin-left: 20px;">
+        <button class="qty-btn minus" >
+          <img src="assets/minus-from-cart.svg" alt="minus" style="width: 26px; height: 25px;">
+        </button>
+        <div class="qty-display" style="background: #fff; color: #222; font-size: 16px; font-weight: 500; width: 40px; height: 26px; display: flex; align-items: center; justify-content: center; border-radius: 0px; margin: 0 0px;">${item.quantity}</div>
+        <button class="qty-btn plus">
+          <img src="assets/add-to-cart.svg" alt="plus" style="width: 26px; height: 25px;">
+        </button>
+      </div>
+    `;
+  }
+
   // Create item info section
   const infoHTML = `
     <div class="item-info">
-      <div class="item-name">${item.title}</div>
-      <div class="item-price">₹${item.price}</div>
-      <div class="item-rating">
-        <span class="star">★</span>
-        <span>${item.rating}</span>
-        <span class="delivery-time">${item.deliveryTime}</span>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <div class="pizza-title">${item.title}</div>
+        <div class="pizza-price" style="font-size: 18px; font-weight: bold; color: #333;">₹${item.price}</div>
       </div>
-      <div class="quantity-controls">
-        <button class="qty-btn minus">-</button>
-        <div class="qty-display" id="qty-${index}">${item.quantity}</div>
-        <button class="qty-btn plus">+</button>
+      <div class="pizza-footer">
+        <div class="pizza-footer-space">
+          <div class="pizza-rating" style="background-color: #f0f0f0; padding: 0px 8px; border-radius: 4px; margin-right: 8px;">
+            <img src="assets/star-filled.png" alt="star" style="width: 14px; height: 14px; margin-right: 2px;">
+            <span>${item.rating}</span>
+          </div>
+          <div class="pizza-rating" style="background-color: #BEBEBE; padding: 0px 4px; border-radius: 5px;">
+            <div class="pizza-rating" style="background-color: #F7F8FA; padding: 4px 4px; border-radius: 5px;">
+              <span>(${item.deliveryTime})</span>
+            </div>
+          </div>
+        </div>
+        ${quantityControlsHTML}
       </div>
     </div>
   `;
-  
+
   carouselItem.innerHTML = imageHTML + infoHTML;
-  
+
   // Add event listeners for quantity buttons
   setTimeout(() => {
     const minusBtn = carouselItem.querySelector('.qty-btn.minus');
     const plusBtn = carouselItem.querySelector('.qty-btn.plus');
-    
     if (minusBtn) {
       minusBtn.addEventListener('click', () => changeQuantity(index, -1));
     }
-    
     if (plusBtn) {
       plusBtn.addEventListener('click', () => changeQuantity(index, 1));
     }
   }, 0);
-  
+
   return carouselItem;
 }
 
@@ -232,13 +266,34 @@ function positionCarousel() {
 
 // Function to change quantity
 function changeQuantity(itemIndex, change) {
-  const qtyDisplay = document.getElementById(`qty-${itemIndex}`);
-  if (!qtyDisplay) return;
-  
-  let quantity = parseInt(qtyDisplay.textContent) + change;
-  if (quantity < 1) quantity = 1;
-  
-  qtyDisplay.textContent = quantity;
+  const carousel = document.getElementById('carousel');
+  if (!carousel) return;
+  const item = carousel.children[itemIndex];
+  if (!item) return;
+
+  // Find the qty display and parse value
+  const qtyDisplay = item.querySelector('.qty-display');
+  let quantity = qtyDisplay ? parseInt(qtyDisplay.textContent) : 0;
+  quantity += change;
+  if (quantity < 0) quantity = 0;
+
+  // Update the item.quantity in the data (if you want to persist)
+  // If you want to update the UI, re-render the item
+  // For simplicity, just update the UI here:
+  if (quantity === 0) {
+    // Replace with only plus button
+    item.querySelector('.quantity-controls').outerHTML = `<button class="qty-btn plus">+</button>`;
+    // Add event listener to new plus button
+    setTimeout(() => {
+      const plusBtn = item.querySelector('.qty-btn.plus');
+      if (plusBtn) {
+        plusBtn.addEventListener('click', () => changeQuantity(itemIndex, 1));
+      }
+    }, 0);
+  } else {
+    // Update the qty display
+    if (qtyDisplay) qtyDisplay.textContent = quantity;
+  }
 }
 
 // Video player functionality for YouTube embed
