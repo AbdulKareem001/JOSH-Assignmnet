@@ -38,17 +38,17 @@ function createPizzaCard(pizza) {
   // Create pizza info section
   const infoHTML = `
     <div class="pizza-info">
-      <div class="pizza-title">${pizza.title}</div>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <div class="pizza-title">${pizza.title}</div>
+        <div class="pizza-price" style="font-size: 18px; font-weight: bold; color: #333;">₹${pizza.price}</div>
+      </div>
       <div class="pizza-footer">
-        <div class="pizza-rating">
+        <div class="pizza-rating" style="background-color: #f0f0f0; padding: 4px 8px; border-radius: 4px; display: flex; align-items: center; gap: 4px;">
           <span class="star">★</span>
           <span>${pizza.rating}</span>
           <span>(${pizza.deliveryTime})</span>
         </div>
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <span class="pizza-price">₹${pizza.price}</span>
-          <button class="add-btn">+</button>
-        </div>
+        <button class="add-btn">+</button>
       </div>
     </div>
   `;
