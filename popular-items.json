@@ -18,7 +18,7 @@
       "price": 184,
       "discount": 30,
       "imagePath": "assets\\unsplash_33GPuoFI7v8.png",
-      "quantity": 1
+      "quantity": 0
     },
     {
       "id": 3,
@@ -58,7 +58,7 @@
       "price": 220,
       "discount": 15,
       "imagePath": "assets\\unsplash_33GPuoFI7v8.png",
-      "quantity": 1
+      "quantity": 0
     }
   ]
 }

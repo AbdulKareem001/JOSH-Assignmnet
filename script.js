@@ -26,16 +26,14 @@ async function fetchPopularItemsData() {
 function createPizzaCard(pizza) {
   const pizzaCard = document.createElement('div');
   pizzaCard.className = 'pizza-card';
-  
-  // Create pizza image
+
   const imageHTML = `
     <div style="position: relative;">
       ${pizza.discount ? `<div class="discount-badge">${pizza.discount}%</div>` : ''}
       <img class="pizza-image" src="${pizza.imagePath}" alt="${pizza.title}" style="height: 200px; width: 100%; object-fit: cover;">
     </div>
   `;
-  
-  // Create pizza info section
+
   const infoHTML = `
     <div class="pizza-info">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
@@ -43,26 +41,67 @@ function createPizzaCard(pizza) {
         <div class="pizza-price" style="font-size: 18px; font-weight: bold; color: #333;">₹${pizza.price}</div>
       </div>
       <div class="pizza-footer">
-      <div class="pizza-footer-space" >
-        <div class="pizza-rating" style="background-color: #f0f0f0; padding: 0px 8px; border-radius: 4px; margin-right: 8px;">
-          <img src="assets/star-filled.png" alt="star" style="width: 14px; height: 14px; margin-right: 2px;">
-          <span >${pizza.rating}</span>
+        <div class="pizza-footer-space">
+          <div class="pizza-rating" style="background-color: #f0f0f0; padding: 0px 8px; border-radius: 4px; margin-right: 8px;">
+            <img src="assets/star-filled.png" alt="star" style="width: 14px; height: 14px; margin-right: 2px;">
+            <span>${pizza.rating}</span>
           </div>
-          
-
-           <div class="pizza-rating" style="background-color: #BEBEBE; padding: 0px 4px; border-radius: 5px;">
-           <div class="pizza-rating" style="background-color: #F7F8FA; padding: 4px 4px; border-radius: 5px;">
-          <span>(${pizza.deliveryTime})</span>
-           </div>
-           </div>
+          <div class="pizza-rating" style="background-color: #BEBEBE; padding: 0px 4px; border-radius: 5px;">
+            <div class="pizza-rating" style="background-color: #F7F8FA; padding: 4px 4px; border-radius: 5px;">
+              <span>(${pizza.deliveryTime})</span>
+            </div>
+          </div>
         </div>
-        <button class="add-btn">+</button>
+        <div class="pizza-counter"></div>
       </div>
     </div>
   `;
-  
+
   pizzaCard.innerHTML = imageHTML + infoHTML;
+
+  const counterContainer = pizzaCard.querySelector('.pizza-counter');
+  renderAddButton(counterContainer);
+
   return pizzaCard;
+}
+
+function renderAddButton(container) {
+  container.innerHTML = `
+    <button class="add-btn">+</button>
+  `;
+
+  const addBtn = container.querySelector('.add-btn');
+  addBtn.addEventListener('click', () => {
+    renderCounter(container, 1); // Start with 1 on first click
+  });
+}
+
+function renderCounter(container, count) {
+  container.innerHTML = `
+    <div class="quantity-controls" style="display: flex; align-items: center; justify-content: center; background: #F3BA00; border-radius: 5px; height: 28px; width: 90px;">
+      <button class="qty-btn minus" style="background: none; border: none; color: white; font-size: 18px; width: 26px;">-</button>
+      <div class="qty-display" style="background: #fff; color: #222; font-size: 16px; font-weight: 500; width: 40px; height: 26px; display: flex; align-items: center; justify-content: center; border-radius: 0px; margin: 0 0px;">${count}</div>
+      <button class="qty-btn plus" style="background: none; border: none; color: white; font-size: 18px; width: 26px;">+</button>
+    </div>
+  `;
+
+  const plusBtn = container.querySelector('.qty-btn.plus');
+  const minusBtn = container.querySelector('.qty-btn.minus');
+  const qtyDisplay = container.querySelector('.qty-display');
+
+  plusBtn.addEventListener('click', () => {
+    count++;
+    qtyDisplay.textContent = count;
+  });
+
+  minusBtn.addEventListener('click', () => {
+    count--;
+    if (count <= 0) {
+      renderAddButton(container); // Back to original "+" button
+    } else {
+      qtyDisplay.textContent = count;
+    }
+  });
 }
 
 // Function to create a carousel item element
@@ -81,28 +120,6 @@ function createCarouselItem(item, index, isActive = false) {
       <img src="${item.imagePath}" alt="${item.title}">
     </div>
   `;
-
-  // Quantity controls UI (matches the image)
-  let quantityControlsHTML = '';
-  if (item.quantity === 0) {
-    quantityControlsHTML = `
-      <button class="qty-btn plus">
-          <img src="assets/move-to-cart.png" alt="plus" style="width: 26px; height: 25px;">
-        </button>
-    `;
-  } else {
-    quantityControlsHTML = `
-      <div class="quantity-controls custom-qty-controls" style="display: flex; align-items: center; justify-content: center;  background: #F3BA00; border-radius: 5px; height: 28px; width: 90px; margin-left: 20px;">
-        <button class="qty-btn minus" >
-          <img src="assets/minus-from-cart.svg" alt="minus" style="width: 26px; height: 25px;">
-        </button>
-        <div class="qty-display" style="background: #fff; color: #222; font-size: 16px; font-weight: 500; width: 40px; height: 26px; display: flex; align-items: center; justify-content: center; border-radius: 0px; margin: 0 0px;">${item.quantity}</div>
-        <button class="qty-btn plus">
-          <img src="assets/add-to-cart.svg" alt="plus" style="width: 26px; height: 25px;">
-        </button>
-      </div>
-    `;
-  }
 
   // Create item info section
   const infoHTML = `
@@ -123,25 +140,16 @@ function createCarouselItem(item, index, isActive = false) {
             </div>
           </div>
         </div>
-        ${quantityControlsHTML}
+        <div class="add-btn-container">
+          <button class="add-btn" onclick="toggleCounter(this)">
+            +
+          </button>
+        </div>
       </div>
     </div>
   `;
 
   carouselItem.innerHTML = imageHTML + infoHTML;
-
-  // Add event listeners for quantity buttons
-  setTimeout(() => {
-    const minusBtn = carouselItem.querySelector('.qty-btn.minus');
-    const plusBtn = carouselItem.querySelector('.qty-btn.plus');
-    if (minusBtn) {
-      minusBtn.addEventListener('click', () => changeQuantity(index, -1));
-    }
-    if (plusBtn) {
-      plusBtn.addEventListener('click', () => changeQuantity(index, 1));
-    }
-  }, 0);
-
   return carouselItem;
 }
 
@@ -264,36 +272,50 @@ function positionCarousel() {
   carousel.style.transform = `translateX(${offset}px)`;
 }
 
-// Function to change quantity
-function changeQuantity(itemIndex, change) {
-  const carousel = document.getElementById('carousel');
-  if (!carousel) return;
-  const item = carousel.children[itemIndex];
-  if (!item) return;
+// Function to toggle counter for popular items
+function toggleCounter(btn) {
+  const parent = btn.parentElement;
 
-  // Find the qty display and parse value
-  const qtyDisplay = item.querySelector('.qty-display');
-  let quantity = qtyDisplay ? parseInt(qtyDisplay.textContent) : 0;
-  quantity += change;
-  if (quantity < 0) quantity = 0;
+  const counterDiv = document.createElement('div');
+  counterDiv.className = 'counter-controls';
 
-  // Update the item.quantity in the data (if you want to persist)
-  // If you want to update the UI, re-render the item
-  // For simplicity, just update the UI here:
-  if (quantity === 0) {
-    // Replace with only plus button
-    item.querySelector('.quantity-controls').outerHTML = `<button class="qty-btn plus">+</button>`;
-    // Add event listener to new plus button
-    setTimeout(() => {
-      const plusBtn = item.querySelector('.qty-btn.plus');
-      if (plusBtn) {
-        plusBtn.addEventListener('click', () => changeQuantity(itemIndex, 1));
-      }
-    }, 0);
-  } else {
-    // Update the qty display
-    if (qtyDisplay) qtyDisplay.textContent = quantity;
-  }
+  const minusBtn = document.createElement('button');
+  minusBtn.textContent = '-';
+  minusBtn.onclick = function (e) {
+    e.stopPropagation();
+    const current = parseInt(countSpan.textContent);
+    if (current > 1) {
+      countSpan.textContent = current - 1;
+    } else {
+      parent.innerHTML = '';
+      const newBtn = document.createElement('button');
+      newBtn.className = 'add-btn';
+      newBtn.textContent = '+';
+      newBtn.onclick = function (e) { 
+        e.stopPropagation();
+        toggleCounter(newBtn); 
+      };
+      parent.appendChild(newBtn);
+    }
+  };
+
+  const countSpan = document.createElement('span');
+  countSpan.textContent = '1';
+
+  const plusBtn = document.createElement('button');
+  plusBtn.textContent = '+';
+  plusBtn.onclick = function (e) {
+    e.stopPropagation();
+    const current = parseInt(countSpan.textContent);
+    countSpan.textContent = current + 1;
+  };
+
+  counterDiv.appendChild(minusBtn);
+  counterDiv.appendChild(countSpan);
+  counterDiv.appendChild(plusBtn);
+
+  parent.innerHTML = '';
+  parent.appendChild(counterDiv);
 }
 
 // Video player functionality for YouTube embed
