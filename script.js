@@ -193,7 +193,7 @@ async function renderPopularItems() {
 }
 
 // Global variables for carousel
-let currentIndex = 0;
+let currentIndex = 1;
 let itemWidth = 270; // Width of each item including margins
 let quantities = [];
 
@@ -259,13 +259,31 @@ function positionCarousel() {
   const items = carousel.children;
   const totalItems = items.length;
   const containerWidth = document.querySelector('.carousel-container').offsetWidth;
+  
+  // Calculate item width to ensure 3 items are fully visible
+  const margin = 20; // Total margin (left + right)
+  itemWidth = Math.floor((containerWidth - margin) / 3) - margin;
+  
+  // Update item widths in the DOM
+  for (let i = 0; i < totalItems; i++) {
+    items[i].style.width = `${itemWidth}px`;
+    items[i].style.minWidth = `${itemWidth}px`;
+  }
 
-  // Calculate offset to always show 3 items, loop endlessly
-  let offset = -(currentIndex * itemWidth);
-
-  // If less than 3 items, center them
-  if (totalItems <= 3) {
-    offset = (containerWidth - totalItems * itemWidth) / 2;
+  // Calculate offset to position items properly
+  let offset = 0;
+  
+  // If we have the active item in the middle (index 1 of visible 3)
+  if (currentIndex > 0 && currentIndex < totalItems - 1) {
+    offset = -((currentIndex - 1) * (itemWidth + margin));
+  } 
+  // If we're at the first item
+  else if (currentIndex === 0) {
+    offset = 0;
+  } 
+  // If we're at the last item
+  else if (currentIndex === totalItems - 1) {
+    offset = -((totalItems - 3) * (itemWidth + margin));
   }
 
   carousel.style.transition = 'transform 0.3s ease';
