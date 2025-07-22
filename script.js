@@ -309,7 +309,6 @@ function setupVideoPlayer() {
       if (videoThumbnail) videoThumbnail.style.display = 'none';
       playOverlay.style.display = 'none';
       video.style.display = 'block';
-      video.currentTime = 0;
       video.play();
     });
 
