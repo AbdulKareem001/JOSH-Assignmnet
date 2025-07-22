@@ -504,7 +504,8 @@ border-top-right-radius: 10px;
 
     .carousel-container {
       width: 100%;
-      max-width: 810px; 
+      max-width: 840px; 
+      margin-top: 15px;
       overflow: hidden;
       z-index: 0;
     }
