@@ -67,10 +67,8 @@
     <div class="popular-items-content">
       <h2>Popular Items</h2>
       <div class="carousel-outer">
-        <button class="carousel-nav prev" onclick="moveCarousel(-1)">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
+        <button class="carousel-nav" onclick="moveCarousel(-1)">
+          <img src="assets/previous-Arrow.png" alt="Previous" width="71" height="71" >
         </button>
         <div class="carousel-container">
           <div class="carousel-wrapper" id="carousel">
@@ -78,9 +76,7 @@
           </div>
         </div>
         <button class="carousel-nav next" onclick="moveCarousel(1)">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
+          <img src="assets/previous-Arrow.png" alt="Next" width="71" height="71" style="transform: rotate(180deg);">
         </button>
       </div>
       <button class="request-dish-btn" onclick="openModal()">Request a Dish</button>
